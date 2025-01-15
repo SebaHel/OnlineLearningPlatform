@@ -14,7 +14,7 @@ import { testDatabaseConnection } from "./DB/database";
 import { NotFoundError } from "./errors/not-found-error";
 import cors from "cors";
 
-const app = express();
+export const app = express();
 
 app.use(json());
 app.use(cookieSession({ signed: false, secure: false }));

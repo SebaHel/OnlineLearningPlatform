@@ -3,5 +3,5 @@ package-lock.json
 .next
 dist/
 .env
-
+jest.config.js
 .env*
