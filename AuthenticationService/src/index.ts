@@ -10,7 +10,6 @@ import { changePasswordRouter } from "./routes/changePassword";
 import { deleteUserRouter } from "./routes/deleteUser";
 
 import { errorHandler } from "./middlewares/error-handler";
-import { testDatabaseConnection } from "./DB/database";
 import { NotFoundError } from "./errors/not-found-error";
 import cors from "cors";
 
@@ -39,15 +38,6 @@ app.all("*", (req, res, next) => {
 });
 
 app.use(errorHandler);
-
-testDatabaseConnection()
-  .then(() => {
-    console.log("Connected to the database");
-  })
-  .catch((err) => {
-    console.error("Failed to connect to the database:", err);
-    process.exit(1);
-  });
 
 app.listen(3001, () => {
   console.log("listen on port 3001");
