@@ -53,3 +53,9 @@ npm install
 cd ClassService
 npm install
 ```
+### 3. Test Authentication Service
+
+```bash
+cd AuthenticationService
+npm test
+```
