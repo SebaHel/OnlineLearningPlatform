@@ -3,6 +3,7 @@ import { Password } from "../../src/authorization/passwordManager";
 import { BadRequestError } from "../../src/errors/bad-request-error";
 import { DatabaseConnectionError } from "../../src/errors/database-connection-error";
 import {
+  addUser,
   deleteUserByEmail,
   findUserByEmail,
   updateUser,
@@ -149,6 +150,7 @@ describe("updateUser()", () => {
       [mockEmail, hashedMockPassword, mockId]
     );
   });
+
   it("Throws Error if provided wrong data", async () => {
     (Password.hashPassword as jest.Mock).mockResolvedValueOnce(
       hashedMockPassword
@@ -171,6 +173,53 @@ describe("updateUser()", () => {
         RETURNING id, email;
     `,
       [mockEmail, hashedMockPassword, mockId]
+    );
+  });
+});
+
+describe("addUser()", () => {
+  const hashedMockPassword = "hashedNewPassword";
+  const mockId = 1;
+  const mockUser = {
+    email: "test@example.com",
+    password: "newPassword",
+  };
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  it("Creates user and returns with provided data", async () => {
+    (Password.hashPassword as jest.Mock).mockResolvedValueOnce(
+      hashedMockPassword
+    );
+
+    (pool.query as jest.Mock).mockResolvedValueOnce({
+      rows: [{ id: mockId, email: mockUser.email }],
+    });
+
+    const result = await addUser(mockUser);
+
+    expect(result).toEqual({ id: mockId, email: mockUser.email });
+    expect(Password.hashPassword).toHaveBeenCalledWith(mockUser.password);
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining("INSERT INTO users"),
+      [mockUser.email, hashedMockPassword]
+    );
+  });
+
+  it("Throws Error when provided bad inputs", async () => {
+    (Password.hashPassword as jest.Mock).mockResolvedValueOnce(
+      hashedMockPassword
+    );
+
+    (pool.query as jest.Mock).mockRejectedValueOnce(
+      new Error("Bad Request Error")
+    );
+
+    await expect(addUser(mockUser)).rejects.toThrow(BadRequestError);
+    expect(Password.hashPassword).toHaveBeenCalledWith(mockUser.password);
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining("INSERT INTO users"),
+      [mockUser.email, hashedMockPassword]
     );
   });
 });

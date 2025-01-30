@@ -24,7 +24,6 @@ export const addUser = async (
 
     return await result.rows[0];
   } catch (err) {
-    console.error("Error adding user:", err);
     throw new BadRequestError("Bad Request");
   }
 };
@@ -51,7 +50,6 @@ export const updateUser = async (
 
     return await result.rows[0];
   } catch (err) {
-    console.error("Error adding user:", err);
     throw new BadRequestError("Bad Request");
   }
 };
