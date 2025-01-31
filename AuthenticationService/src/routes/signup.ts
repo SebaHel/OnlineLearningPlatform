@@ -41,7 +41,6 @@ router.post(
 
     const existingUser = await findUserByEmail(email);
     if (existingUser !== null) {
-      console.log("Email in use");
       return next(new BadRequestError("Choose diffrent Email"));
     } else {
       const user = await addUser({ email, password });
