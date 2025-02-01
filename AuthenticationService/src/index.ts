@@ -38,7 +38,24 @@ app.all("*", (req, res, next) => {
 });
 
 app.use(errorHandler);
+let server: any;
 
-app.listen(3001, () => {
-  console.log("listen on port 3001");
-});
+export const startServer = () => {
+  if (!server) {
+    server = app.listen(3001, () => {
+      console.log(`Listening on port 3001`);
+    });
+  }
+  return server;
+};
+
+export const closeServer = () => {
+  if (server) {
+    server.close(() => console.log("Server closed"));
+    server = null;
+  }
+};
+
+if (process.env.NODE_ENV !== "test") {
+  startServer();
+}
